@@ -67,6 +67,7 @@ def betterEvaluationFunction(gameState):
   gameState.getScore():
   The GameState class is defined in pacman.py and you might want to look into that for other helper methods.
   """
+  return gameState.getScore() #TODO: IMPLEMENT this heuristic!!!
 
 #     ********* MultiAgent Search Agents- sections c,d,e,f*********
 
@@ -93,10 +94,16 @@ class MultiAgentSearchAgent(Agent):
 ######################################################################################
 # c: implementing minimax
 
+def getNextIndexAgent(agentIndex, gameState):
+  return (agentIndex + 1) % gameState.getNumAgents()
+
 class MinimaxAgent(MultiAgentSearchAgent):
   """
     Your minimax agent
   """
+
+
+
 
   def getAction(self, gameState):
     """
@@ -132,10 +139,30 @@ class MinimaxAgent(MultiAgentSearchAgent):
         The depth to which search should continue
 
     """
+    legalMoves = gameState.getLegalActions()
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    states = [gameState.generatePacmanSuccessor(action) for action in legalMoves]
+
+    min_max_values = [self.getMinMaxValue(state, getNextIndexAgent(agentIndex=0, gameState=gameState), self.depth) for state in states]
+    bestScore = max(min_max_values)
+    bestIndices = [index for index in range(len(min_max_values)) if min_max_values[index] == bestScore]
+    chosenIndex = random.choice(bestIndices)  # Pick randomly among the best //TODO: should we make this random?
+    return legalMoves[chosenIndex]
+
+
+  def getMinMaxValue(self, gameState, agentIndex, depth):
+      if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
+          return betterEvaluationFunction(gameState)
+
+      legalMoves = gameState.getLegalActions(agentIndex)
+
+      if agentIndex == 0:
+          return max(self.getMinMaxValue(state, getNextIndexAgent(agentIndex, gameState), depth - 1) for state in [gameState.generatePacmanSuccessor(action) for action in legalMoves])
+      else:
+          return min(self.getMinMaxValue(state, getNextIndexAgent(agentIndex, gameState), depth) for state in [gameState.generateSuccessor(agentIndex, action) for action in legalMoves])
+
+
+
 
 ######################################################################################
 # d: implementing alpha-beta
