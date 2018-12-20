@@ -1,5 +1,8 @@
-import random, util
+
+
+import random, util, numpy
 from game import Agent
+
 
 #     ********* Reflex agent- sections a and b *********
 class ReflexAgent(Agent):
@@ -92,18 +95,17 @@ class MultiAgentSearchAgent(Agent):
     self.depth = int(depth)
 
 ######################################################################################
-# c: implementing minimax
 
 def getNextIndexAgent(agentIndex, gameState):
   return (agentIndex + 1) % gameState.getNumAgents()
+
+# c: implementing minimax
+
 
 class MinimaxAgent(MultiAgentSearchAgent):
   """
     Your minimax agent
   """
-
-
-
 
   def getAction(self, gameState):
     """
@@ -146,7 +148,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     min_max_values = [self.getMinMaxValue(state, getNextIndexAgent(agentIndex=0, gameState=gameState), self.depth) for state in states]
     bestScore = max(min_max_values)
     bestIndices = [index for index in range(len(min_max_values)) if min_max_values[index] == bestScore]
-    chosenIndex = random.choice(bestIndices)  # Pick randomly among the best //TODO: should we make this random?
+    chosenIndex = random.choice(bestIndices)
     return legalMoves[chosenIndex]
 
 
@@ -177,9 +179,49 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
       Returns the minimax action using self.depth and self.evaluationFunction
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    a = - numpy.inf
+    b = numpy.inf
+
+    legalMoves = gameState.getLegalActions()
+
+    states = [gameState.generatePacmanSuccessor(action) for action in legalMoves]
+
+    min_max_values = [self.getAlphaBetaValue(state, getNextIndexAgent(agentIndex=0, gameState=gameState), self.depth, a, b) for state in
+                    states]
+    bestScore = max(min_max_values)
+    bestIndices = [index for index in range(len(min_max_values)) if min_max_values[index] == bestScore]
+    chosenIndex = random.choice(bestIndices)
+    return legalMoves[chosenIndex]
+
+  def getAlphaBetaValue(self, gameState, agentIndex, depth, a, b):
+    if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
+      return betterEvaluationFunction(gameState)
+
+    legalMoves = gameState.getLegalActions(agentIndex)
+
+    if agentIndex == 0:
+      current_max = - numpy.inf
+      for state in [gameState.generatePacmanSuccessor(action) for action in legalMoves]:
+          value = self.getAlphaBetaValue(state, getNextIndexAgent(agentIndex, gameState), depth - 1, a, b)
+          current_max = max(current_max, value)
+          a = max(current_max, a)
+          if current_max >= b:
+              return numpy.inf
+      return current_max
+
+    else:
+      current_min = numpy.inf
+      for state in [gameState.generateSuccessor(agentIndex, action) for action in legalMoves]:
+          value = self.getAlphaBetaValue(state, getNextIndexAgent(agentIndex, gameState), depth, a, b)
+          if value == - numpy.inf:
+              return - numpy.inf
+          current_min = min(current_min, value)
+          b = min(current_min, b)
+          if current_min <= a:
+              return - numpy.inf
+      return current_min
+
+
 
 ######################################################################################
 # e: implementing random expectimax
