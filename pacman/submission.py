@@ -195,7 +195,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
   def getAlphaBetaValue(self, gameState, agentIndex, depth, a, b):
     if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
-      return betterEvaluationFunction(gameState)
+      self.function = betterEvaluationFunction
+      return self.function(gameState)
 
     legalMoves = gameState.getLegalActions(agentIndex)
 
@@ -237,9 +238,30 @@ class RandomExpectimaxAgent(MultiAgentSearchAgent):
       All ghosts should be modeled as choosing uniformly at random from their legal moves.
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    legalMoves = gameState.getLegalActions()
+
+    states = [gameState.generatePacmanSuccessor(action) for action in legalMoves]
+
+    min_max_values = [self.getExpectimaxValue(state, getNextIndexAgent(agentIndex=0, gameState=gameState), self.depth) for state
+                      in states]
+    bestScore = max(min_max_values)
+    bestIndices = [index for index in range(len(min_max_values)) if min_max_values[index] == bestScore]
+    chosenIndex = random.choice(bestIndices)
+    return legalMoves[chosenIndex]
+
+  def getExpectimaxValue(self, gameState, agentIndex, depth):
+      if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
+          return betterEvaluationFunction(gameState)
+
+      legalMoves = gameState.getLegalActions(agentIndex)
+
+      if agentIndex == 0:
+          return max(self.getExpectimaxValue(state, getNextIndexAgent(agentIndex, gameState), depth - 1) for state in
+                     [gameState.generatePacmanSuccessor(action) for action in legalMoves])
+      else:
+          return numpy.average(list((self.getExpectimaxValue(state, getNextIndexAgent(agentIndex, gameState), depth) for state in
+                     [gameState.generateSuccessor(agentIndex, action) for action in legalMoves])))
+
 
 ######################################################################################
 # f: implementing directional expectimax
