@@ -2,6 +2,7 @@
 
 import random, util, numpy
 from game import Agent
+from ghostAgents import DirectionalGhost
 
 
 #     ********* Reflex agent- sections a and b *********
@@ -195,8 +196,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
   def getAlphaBetaValue(self, gameState, agentIndex, depth, a, b):
     if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
-      self.function = betterEvaluationFunction
-      return self.function(gameState)
+      return betterEvaluationFunction(gameState)
 
     legalMoves = gameState.getLegalActions(agentIndex)
 
@@ -277,9 +277,38 @@ class DirectionalExpectimaxAgent(MultiAgentSearchAgent):
       All ghosts should be modeled as using the DirectionalGhost distribution to choose from their legal moves.
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    legalMoves = gameState.getLegalActions()
+
+    states = [gameState.generatePacmanSuccessor(action) for action in legalMoves]
+
+    min_max_values = [self.getDirectionalExpectimaxValue(state, getNextIndexAgent(agentIndex=0, gameState=gameState), self.depth) for
+                      state
+                      in states]
+    bestScore = max(min_max_values)
+    bestIndices = [index for index in range(len(min_max_values)) if min_max_values[index] == bestScore]
+    chosenIndex = random.choice(bestIndices)
+    return legalMoves[chosenIndex]
+
+  def getDirectionalExpectimaxValue(self, gameState, agentIndex, depth):
+      if (agentIndex == 0 and depth == 1) or gameState.isWin() or gameState.isLose():
+          return betterEvaluationFunction(gameState)
+
+      legalMoves = gameState.getLegalActions(agentIndex)
+
+      if agentIndex == 0:
+          return max(self.getDirectionalExpectimaxValue(state, getNextIndexAgent(agentIndex, gameState), depth - 1) for state in
+                     [gameState.generatePacmanSuccessor(action) for action in legalMoves])
+      else:
+          ghost = DirectionalGhost(index=agentIndex)
+          act_prob_dict = ghost.getDistribution(gameState)
+          val_prob_dict = util.Counter()
+          for action in legalMoves:
+              state = gameState.generateSuccessor(agentIndex, action)
+              val = self.getDirectionalExpectimaxValue(state, getNextIndexAgent(agentIndex, gameState), depth)
+              val_prob_dict[val] = act_prob_dict[action]
+          val_prob_dict.normalize()
+          return util.chooseFromDistribution(val_prob_dict)
+
 
 
 ######################################################################################
