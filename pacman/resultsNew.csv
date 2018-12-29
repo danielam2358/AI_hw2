@@ -1,0 +1,5 @@
+Agent Type,Depth,Map,Avg Score of 5 games,Avg runtime of 5 games,Ghost Type
+RandomExpectimaxAgent,4,trickyClassic,803.2,5.38E-02,Random
+RandomExpectimaxAgent,4,trickyClassic,1386.4,4.89E-02,Directional
+DirectionalExpectimaxAgent,4,trickyClassic,283.2,6.41E-02,Random
+DirectionalExpectimaxAgent,4,trickyClassic,745.2,5.03E-02,Directional
