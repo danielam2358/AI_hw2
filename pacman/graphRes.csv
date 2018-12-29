@@ -1,0 +1,25 @@
+Avg Score as a function of depth ,depth,avg score,,,,,,
+ReflexAgent,1,36.543,,d=1,d=2,d=3,d=4,Agent Type
+BetterAgent,1,57.213,,36.543,,,,ReflexAgent
+MinimaxAgent,2,481.671,,57.213,,,,BetterAgent
+MinimaxAgent,3,564.5,,,481.671,564.5,560.471,MinimaxAgent
+MinimaxAgent,4,560.471,,,458.942,629.485,684.128,AlphaBetaAgent
+AlphaBetaAgent,2,458.942,,,401.043,792.242,860.043,RandomExpectimaxAgent
+AlphaBetaAgent,3,629.485,,,,,,
+AlphaBetaAgent,4,684.128,,,,,,
+RandomExpectimaxAgent,2,401.043,,,,,,
+RandomExpectimaxAgent,3,792.242,,,,,,
+RandomExpectimaxAgent,4,860.043,,,,,,
+,,,,,,,,
+Runtime as a function of depth ,depth,avg score,,,,,,
+ReflexAgent,1,0.000146978,,d=1,d=2,d=3,d=4,Agent Type
+BetterAgent,1,0.000144551,,0.000146978,,,,ReflexAgent
+MinimaxAgent,2,0.002977855,,0.000144551,,,,BetterAgent
+MinimaxAgent,3,0.020924326,,,0.002977855,0.020924326,0.163874153,MinimaxAgent
+MinimaxAgent,4,0.163874153,,,0.002296567,0.008898312,0.034733761,AlphaBetaAgent
+AlphaBetaAgent,2,0.002296567,,,0.003389264,0.023567637,0.185161184,RandomExpectimaxAgent
+AlphaBetaAgent,3,0.008898312,,,,,,
+AlphaBetaAgent,4,0.034733761,,,,,,
+RandomExpectimaxAgent,2,0.003389264,,,,,,
+RandomExpectimaxAgent,3,0.023567637,,,,,,
+RandomExpectimaxAgent,4,0.185161184,,,,,,
